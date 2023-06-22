@@ -15,13 +15,14 @@ aarch64 | arm64)
 esac
 
 mkdir -p /opt/sing-warp
+DIR_TMP="$(mktemp -d)"
 
 # install project files
-curl -L 'https://github.com/wy580477/sing-warp/archive/refs/tags/release.tar.gz' | tar xz -C /opt/sing-warp
+curl -L 'https://github.com/wy580477/sing-warp/archive/refs/tags/release.tar.gz' | tar xz -C ${DIR_TMP}
+cp ${DIR_TMP}/sing-warp-release/* /opt/sing-warp/
 cp -f /opt/sing-warp/sing-warp.service /etc/systemd/system/
 
 # install sing-box
-DIR_TMP="$(mktemp -d)"
 curl -L 'https://github.com/SagerNet/sing-box/releases/download/v1.3-rc2/sing-box-1.3-rc2-linux-'${OS_type}'.tar.gz' | tar xz -C ${DIR_TMP}
 install -m 755 ${DIR_TMP}/sing-box*/sing-box /opt/sing-warp/
 rm -rf ${DIR_TMP}
