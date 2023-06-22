@@ -1,0 +1,12 @@
+[Unit]
+Description=sing-warp Service
+After=network.target nss-lookup.target
+
+[Service]
+Type=simple
+ExecStartPre=bash /opt/sing-warp/pre-start.sh
+ExecStart=/opt/sing-warp/sing-box run -c /tmp/sing-warp.json
+WorkingDirectory=/opt/sing-warp
+
+[Install]
+WantedBy=multi-user.target

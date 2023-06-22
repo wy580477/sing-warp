@@ -1,0 +1,26 @@
+# 项目网址: https://github.com/wy580477/sing-warp
+# 修改后，执行 "systemctl restart sing-warp" 生效
+
+# Socks5 代理端口
+socks_port: 51808
+# TUN 透明代理模式，设置为 true 开启后，无需额外设置，自动接管流量。
+# 不支持 OPENVZ / LXC  等容器 VPS。启用后，ipv6 流量无法入站，不要在只有 ipv6 网络的 VPS 上使用。
+tun_mode: false
+# WireGuard MTU 值，如果 WARP 出站工作不正常，可尝试为修改更小的数值。
+wg_mtu: 1408
+# 强制重新解析域名，有助于 WARP 解锁效果。但会造成 Tor 浏览器和 Cloudflared 无法连接。设置为 false 为禁用。
+override_dest: true
+
+# 分流模式: rule / global / direct 。默认 rule 模式为分流模式，global 为全局 WARP 模式，direct 为全局直连模式。
+routing_mode: rule
+# 反向匹配。默认 false 为正向匹配，true 为反向匹配。
+invert_mode: false
+# 下列四类分类规则，每个类别多项均以英文逗号隔开。
+# geosite 域名集分类，详细分类列表见：https://github.com/v2fly/domain-list-community/tree/master/data
+geosite: netflix,disney,openai,dazn,spotify,bing,imgur
+# 域名后缀匹配
+domain_suffix: google.com
+# geoip 国家/地区分类，例如：cn,us,jp
+geoip:
+# ip 地址段匹配，例如：1.1.1.1/32,1.0.0.1/24
+ip_cidr:

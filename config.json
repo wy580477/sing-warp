@@ -1,0 +1,98 @@
+{
+  "log": {
+    "level": "info"
+  },
+  "dns": {
+    "servers": [
+      {
+        "address": "tls://1.1.1.1",
+        "strategy": "prefer_ipv4"
+      },
+      {
+        "tag": "warp-dns",
+        "address": "tls://1.1.1.1",
+        "strategy": "prefer_ipv6"
+      }
+    ],
+    "rules": [
+      {
+        "outbound": ["WARP"],
+        "server": "warp-dns"
+      }
+    ],
+    "disable_cache": false
+  },
+  "inbounds": [
+    {
+      "type": "socks",
+      "listen": "127.0.0.1",
+      "listen_port": 51808,
+      "sniff": true,
+      "sniff_override_destination": true
+    },
+    {
+      "type": "tun",
+      "inet4_address": "198.18.0.1/30",
+      "inet6_address": "fdfe:dcba:9876::1/126",
+      "mtu": 9000,
+      "auto_route": true,
+      "strict_route": false,
+      "stack": "gvisor",
+      "sniff": true,
+      "sniff_override_destination": true
+    }
+  ],
+  "outbounds": [
+    {
+      "type": "direct"
+    },
+    {
+      "type": "wireguard",
+      "tag": "warp",
+      "server": "engage.cloudflareclient.com",
+      "server_port": 2408,
+      "system_interface": false,
+      "local_address": ["198.18.0.1/32", "fd00::1/128"],
+      "private_key": "WG_PRIVATE_KEY",
+      "peer_public_key": "WG_PEER_PUBLIC_KEY",
+      "reserved": [0, 0, 0],
+      "mtu": 1408
+    },
+    {
+      "type": "direct",
+      "tag": "WARP",
+      "detour": "warp",
+      "domain_strategy": "prefer_ipv6"
+    },
+    {
+      "type": "dns",
+      "tag": "dns-out"
+    },
+    {
+      "type": "block",
+      "tag": "block"
+    }
+  ],
+  "route": {
+    "rules": [
+      {
+        "protocol": "dns",
+        "outbound": "dns-out"
+      },
+      {
+        "protocol": "quic",
+        "port": [443],
+        "outbound": "block"
+      },
+      {
+        "geosite": [""],
+        "domain_suffix": [""],
+        "geoip": [""],
+        "ip_cidr": [""],
+        "outbound": "WARP",
+        "invert": false
+      }
+    ],
+    "auto_detect_interface": true
+  }
+}
