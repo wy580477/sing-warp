@@ -2,6 +2,14 @@
 
 基于 [sing-box](https://github.com/SagerNet/sing-box) 核心的一键 WARP 解锁脚本，强制重新解析域名到 ipv6 加强解锁效果。暂不支持在仅有 ipv6 网络环境下安装。
 
+   <details>
+      <summary><b>WARP 解锁效果示例</b></summary>      
+      
+  ![image](https://github.com/wy580477/sing-warp/assets/98247050/236d6ed1-d3a6-47c6-9285-6fd942d59976)
+
+      
+   </details>
+
 支持 amd64 / arm64 架构。 理论上支持各种使用 systemd 的 Linux 发行版。
 
 默认提供本地 socks 代理入口。可启用 TUN 透明代理模式，此模式下无需额外设置即可接管流量。
@@ -12,7 +20,8 @@
 ## 安装
 
 ```bash
-curl https://raw.githubusercontent.com/wy580477/sing-warp/main/install.sh | sudo bash 
+sudo -i
+bash <(curl -L https://raw.githubusercontent.com/wy580477/sing-warp/main/install.sh) 
 ```
 
 ## 使用
