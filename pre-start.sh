@@ -20,7 +20,7 @@ if [[ ! "${WG_RESERVED}" =~ , ]]; then
 fi
 
 if [ "${OVERRIDE_DEST}" = "false" ]; then
-    sed -t "s|\"sniff_override_destination\": true|\"sniff_override_destination\": false|g" /tmp/sing-warp.json
+    sed -i "s|\"sniff_override_destination\": true|\"sniff_override_destination\": false|g" /tmp/sing-warp.json
 fi
 
 sed -i "s|WG_PRIVATE_KEY|${WG_PRIVATE_KEY}|;s|WG_PEER_PUBLIC_KEY|${WG_PEER_PUBLIC_KEY}|;s|fd00::1|${WG_IP6_ADDR}|;s|\[0, 0, 0\]|${WG_RESERVED}|;s|1408|${WG_MTU}|;s|51808|${SOCKS_PORT}|" /tmp/sing-warp.json

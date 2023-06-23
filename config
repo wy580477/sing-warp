@@ -15,7 +15,7 @@ override_dest: true
 routing_mode: rule
 # 反向匹配。默认 false 为正向匹配，true 为反向匹配。
 invert_mode: false
-# 下列四类分类规则，每个类别多项均以英文逗号隔开。
+# 下列两类分类规则，每个类别多项均以英文逗号隔开。
 # geosite 域名集分类，详细分类列表见：https://github.com/v2fly/domain-list-community/tree/master/data
 geosite: netflix,disney,openai,dazn,spotify,bing,imgur
 # 域名后缀匹配
