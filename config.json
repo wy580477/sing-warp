@@ -6,6 +6,7 @@
     "servers": [
       {
         "address": "tls://1.1.1.1",
+        "detour": "direct",
         "strategy": "prefer_ipv4"
       },
       {
@@ -93,6 +94,7 @@
         "invert": false
       }
     ],
+    "final": "direct",
     "auto_detect_interface": true
   }
 }

@@ -50,12 +50,14 @@ ROUTING_MODE=$(grep routing_mode /opt/sing-warp/config | sed "s|.*:||;s| ||g")
 if [ "${ROUTING_MODE}" = "rule" ]; then
     GENERATE_RULES
 elif [ "${ROUTING_MODE}" = "global" ]; then
-    sed -i 's|"invert": false|"invert": true|' /tmp/sing-warp.json
+    sed -i 's|"ip_cidr": \[""\],||;s|"final": "direct"|"final": "WARP"|' /tmp/sing-warp.json
+else
+    sed -i 's|"ip_cidr": \[""\],||' /tmp/sing-warp.json
 fi
 
 # check if tun_mode enabled
 TUN_MODE=$(grep tun_mode /opt/sing-warp/config | sed "s|.*:||;s| ||g")
 
 if [ "${TUN_MODE}" = "false" ]; then
-    sed -i "32,42d" /tmp/sing-warp.json
+    sed -i "33,43d" /tmp/sing-warp.json
 fi
