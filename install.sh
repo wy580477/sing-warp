@@ -19,6 +19,11 @@ DIR_TMP="$(mktemp -d)"
 
 # install project files
 curl -L 'https://github.com/wy580477/sing-warp/archive/refs/tags/release.tar.gz' | tar xz -C ${DIR_TMP}
+
+if [ -f /opt/sing-warp/config ]; then
+    cp /opt/sing-warp/config /opt/sing-warp/config.bak
+fi
+
 cp ${DIR_TMP}/sing-warp-release/* /opt/sing-warp/
 cp -f /opt/sing-warp/sing-warp.service /etc/systemd/system/
 
@@ -32,6 +37,17 @@ curl -L -o /opt/sing-warp/warp-reg https://github.com/badafans/warp-reg/releases
 chmod +x /opt/sing-warp/warp-reg
 
 systemctl enable --now sing-warp
+
+echo ''
+read -r -p "是否启用分流模式？[y/N] " input
+
+if [[ "$input" =~ ^([yY][eE][sS]|[yY])+$ ]]; then
+    echo '已启用分流模式'
+    sed -i 's|routing_mode:.*|routing_mode: rule|' /opt/sing-warp/config
+else
+    echo '已启用全局 WARP 模式'
+    sed -i 's|routing_mode:.*|routing_mode: global|' /opt/sing-warp/config
+fi
 
 echo ''
 if systemctl is-active --quiet sing-warp ; then
