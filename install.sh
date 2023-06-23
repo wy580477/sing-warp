@@ -50,6 +50,7 @@ else
 fi
 
 echo ''
+sleep 5
 if systemctl is-active --quiet sing-warp ; then
     echo "sing-warp 服务启动成功。"
     SOCKS_PORT=$(grep socks_port /opt/sing-warp/config | sed "s|.*:||;s| ||g")
