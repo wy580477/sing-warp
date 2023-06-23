@@ -50,6 +50,17 @@ else
 fi
 
 echo ''
+read -r -p "是否启用 TUN 模式？[y/N] 注意: 此模式不支持 OPENVZ / LXC 等容器类 VPS, 启用此模式后 ipv6 流量无法入站" input
+
+if [[ "$input" =~ ^([yY][eE][sS]|[yY])+$ ]]; then
+    echo '已启用 TUN 模式'
+    sed -i 's|tun_mode:.*|tun_mode: true|' /opt/sing-warp/config
+else
+    echo '已禁用 TUN 模式'
+    sed -i 's|tun_mode:.*|tun_mode: false|' /opt/sing-warp/config
+fi
+
+echo ''
 sleep 5
 if systemctl is-active --quiet sing-warp ; then
     echo "sing-warp 服务启动成功。"
