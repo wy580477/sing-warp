@@ -1,6 +1,6 @@
 # sing-warp
 
-基于 sing-box 核心的一键 WARP 解锁脚本，强制重新解析域名到 ipv6 加强解锁效果。暂不支持在仅有 ipv6 网络环境下安装。
+基于 [sing-box](https://github.com/SagerNet/sing-box) 核心的一键 WARP 解锁脚本，强制重新解析域名到 ipv6 加强解锁效果。暂不支持在仅有 ipv6 网络环境下安装。
 
 支持 amd64 / arm64 架构。 理论上支持各种使用 systemd 的 Linux 发行版。
 
@@ -29,6 +29,8 @@ systemctl status sing-warp # 查看 sing-warp 运行状态
 ## 配置
 
 sing-warp 配置文件位于 /opt/sing-warp/config，可使用文本编辑器进行修改分流模式、分流规则等。
+
+WARP 配置文件位于 /opt/sing-warp/warp.conf，默认由 [warp-reg](https://github.com/badafans/warp-reg) 自动生成，可自行修改。
 
 ## 卸载
 
