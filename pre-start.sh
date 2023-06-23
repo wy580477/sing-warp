@@ -30,14 +30,8 @@ GENERATE_RULES() {
     INVERT_MODE=$(grep invert_mode: /opt/sing-warp/config | sed "s|invert_mode:||;s| ||g")
     GEOSITE_RULES=$(grep geosite: /opt/sing-warp/config | sed "s|geosite:||;s| ||g;s|,$||;s|,|\",\"|g")
     DOMAIN_SUFFIX_RULES=$(grep domain_suffix: /opt/sing-warp/config | sed "s|domain_suffix:||;s| ||g;s|,$||;s|,|\",\"|g")
-    GEOIP_RULES=$(grep geoip: /opt/sing-warp/config | sed "s|geoip:||;s| ||g;s|,$||;s|,|\",\"|g")
-    IP_CIDR_RULES=$(grep ip_cidr: /opt/sing-warp/config | sed "s|ip_cidr:||;s| ||g;s|,$||;s|,|\",\"|g")
 
-    if [[ "${IP_CIDR_RULES}" = "" ]]; then
-        sed -i 's|"geosite": \[""\]|"geosite": \["'${GEOSITE_RULES}'"\]|;s|"domain_suffix": \[""\]|"domain_suffix": \["'${DOMAIN_SUFFIX_RULES}'"\]|;s|"geoip": \[""\]|"geoip": \["'${GEOIP_RULES}'"\]|;s|"ip_cidr": \[""\],||' /tmp/sing-warp.json
-    else
-        sed -i 's|"geosite": \[""\]|"geosite": \["'${GEOSITE_RULES}'"\]|;s|"domain_suffix": \[""\]|"domain_suffix": \["'${DOMAIN_SUFFIX_RULES}'"\]|;s|"geoip": \[""\]|"geoip": \["'${GEOIP_RULES}'"\]|;s|"ip_cidr": \[""\]|"ip_cidr": \["'${IP_CIDR_BLOCK}'"\]|' /tmp/sing-warp.json
-    fi
+    sed -i 's|"geosite": \[""\]|"geosite": \["'${GEOSITE_RULES}'"\]|;s|"domain_suffix": \[""\]|"domain_suffix": \["'${DOMAIN_SUFFIX_RULES}'"\]|' /tmp/sing-warp.json
 
     if [ "${INVERT_MODE}" != "false" ]; then
         sed -i 's|"invert": false|"invert": true|' /tmp/sing-warp.json
@@ -50,9 +44,7 @@ ROUTING_MODE=$(grep routing_mode /opt/sing-warp/config | sed "s|.*:||;s| ||g")
 if [ "${ROUTING_MODE}" = "rule" ]; then
     GENERATE_RULES
 elif [ "${ROUTING_MODE}" = "global" ]; then
-    sed -i 's|"ip_cidr": \[""\],||;s|"final": "direct"|"final": "WARP"|' /tmp/sing-warp.json
-else
-    sed -i 's|"ip_cidr": \[""\],||' /tmp/sing-warp.json
+    sed -i 's|"final": "direct"|"final": "WARP"|' /tmp/sing-warp.json
 fi
 
 # check if tun_mode enabled

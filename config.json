@@ -89,8 +89,6 @@
       {
         "geosite": [""],
         "domain_suffix": [""],
-        "geoip": [""],
-        "ip_cidr": [""],
         "outbound": "WARP",
         "invert": false
       }

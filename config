@@ -20,7 +20,3 @@ invert_mode: false
 geosite: netflix,disney,openai,dazn,spotify,bing,imgur
 # 域名后缀匹配
 domain_suffix: google.com
-# geoip 国家/地区分类，例如：cn,us,jp
-geoip:
-# ip 地址段匹配，例如：1.1.1.1/32,1.0.0.1/24
-ip_cidr:
