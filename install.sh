@@ -26,7 +26,7 @@ if [ ! -f /opt/sing-warp/config ]; then
     cp ${DIR_TMP}/sing-warp-release/config /opt/sing-warp/
 fi
 
-cp ${DIR_TMP}/sing-warp-release/{config.json,pre-start.sh,sing-warp.service,README.md,LICENSE} /opt/sing-warp/
+cp ${DIR_TMP}/sing-warp-release/{config.json,pre-start.sh,node_info.sh,sing-warp.service,README.md,LICENSE} /opt/sing-warp/
 cp -f /opt/sing-warp/sing-warp.service /etc/systemd/system/
 
 # install gojq
@@ -43,7 +43,7 @@ curl -L -o /opt/sing-warp/warp-reg https://github.com/badafans/warp-reg/releases
 chmod +x /opt/sing-warp/warp-reg
 
 echo ""
-bash /opt/sing-warp/node-info.sh
+bash /opt/sing-warp/node_info.sh
 
 systemctl enable --now sing-warp
 
