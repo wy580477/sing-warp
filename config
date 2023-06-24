@@ -10,6 +10,8 @@ tun_mode: false
 wg_mtu: 1408
 # 强制重新解析域名，有助于 WARP 解锁效果。但会造成 Tor 浏览器和 Cloudflared 无法连接。设置为 false 为禁用。
 override_dest: true
+# 禁止 443 端口的 QUIC 流量，强制 443 端口 WEB 流量使用 TCP 协议。设置为 false 为禁用。
+block_quic_443: true
 
 # 分流模式: rule / global / direct 。默认 rule 模式为分流模式，global 为全局 WARP 模式，direct 为全局直连模式。
 routing_mode: rule

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 cp /opt/sing-warp/config.json /tmp/sing-warp.json
 
 # generate warp config
@@ -23,7 +25,8 @@ if [ "${OVERRIDE_DEST}" = "false" ]; then
     sed -i "s|\"sniff_override_destination\": true|\"sniff_override_destination\": false|g" /tmp/sing-warp.json
 fi
 
-sed -i "s|WG_PRIVATE_KEY|${WG_PRIVATE_KEY}|;s|WG_PEER_PUBLIC_KEY|${WG_PEER_PUBLIC_KEY}|;s|fd00::1|${WG_IP6_ADDR}|;s|\[0, 0, 0\]|${WG_RESERVED}|;s|1408|${WG_MTU}|;s|51808|${SOCKS_PORT}|" /tmp/sing-warp.json
+/opt/sing-warp/gojq '.outbounds |= map(if .tag == "warp" then .private_key = "'${WG_PRIVATE_KEY}'" | .peer_public_key = "'${WG_PEER_PUBLIC_KEY}'" | .local_address = ["198.18.0.1/32","'${WG_IP6_ADDR}'/128"] | .reserved = '${WG_RESERVED}' | .mtu = '${WG_MTU}' else . end) | .inbounds |= map(if .tag == "socks-in" then .listen_port = '${SOCKS_PORT}' else . end)' /tmp/sing-warp.json >/tmp/sing-warp-tmp.json
+mv /tmp/sing-warp-tmp.json /tmp/sing-warp.json
 
 # generate routing rules
 GENERATE_RULES() {
@@ -31,28 +34,30 @@ GENERATE_RULES() {
     GEOSITE_RULES=$(grep ^geosite: /opt/sing-warp/config | sed "s|^geosite:||;s| ||g;s|,$||;s|,|\",\"|g")
     DOMAIN_SUFFIX_RULES=$(grep ^domain_suffix: /opt/sing-warp/config | sed "s|^domain_suffix:||;s| ||g;s|,$||;s|,|\",\"|g")
 
-    sed -i 's|"geosite": \[""\]|"geosite": \["'${GEOSITE_RULES}'"\]|;s|"domain_suffix": \[""\]|"domain_suffix": \["'${DOMAIN_SUFFIX_RULES}'"\]|' /tmp/sing-warp.json
-
-    if [ "${INVERT_MODE}" != "false" ]; then
-        sed -i 's|"invert": false|"invert": true|' /tmp/sing-warp.json
-    fi
+    /opt/sing-warp/gojq '.route.rules |= map(if .outbound == "WARP" then .geosite = ["'${GEOSITE_RULES}'"] | .domain_suffix = ["'${DOMAIN_SUFFIX_RULES}'"] | .invert = '${INVERT_MODE}' else . end)' /tmp/sing-warp.json >/tmp/sing-warp-tmp.json
+    mv /tmp/sing-warp-tmp.json /tmp/sing-warp.json
 }
 
 # set routing mode
 ROUTING_MODE=$(grep ^routing_mode /opt/sing-warp/config | sed "s|.*:||;s| ||g")
+BLOCK_QUIC_443=$(grep ^block_quic_443 /opt/sing-warp/config | sed "s|^block_quic_443:||;s| ||g")
 
 if [ "${ROUTING_MODE}" = "rule" ]; then
     GENERATE_RULES
 elif [ "${ROUTING_MODE}" = "global" ]; then
-    sed -i 's|"final": "direct"|"final": "WARP"|' /tmp/sing-warp.json
+    /opt/sing-warp/gojq '.route.final = "WARP"' /tmp/sing-warp.json >/tmp/sing-warp-tmp.json
+    mv /tmp/sing-warp-tmp.json /tmp/sing-warp.json
+fi
+
+if [ "${BLOCK_QUIC_443}" = "false" ]; then
+    /opt/sing-warp/gojq '.route.rules |= map(select(.protocol != "quic"))' /tmp/sing-warp.json >/tmp/sing-warp-tmp.json
+    mv /tmp/sing-warp-tmp.json /tmp/sing-warp.json
 fi
 
 # check if tun_mode enabled
 TUN_MODE=$(grep ^tun_mode /opt/sing-warp/config | sed "s|.*:||;s| ||g")
-LINE=$(sed -n -e '/"type": "tun"/=' /opt/sing-warp/config.json)
-LINE_START=$((LINE - 2))
-LINE_END=$((LINE + 8))
 
 if [ "${TUN_MODE}" = "false" ]; then
-    sed -i "${LINE_START},${LINE_END}d" /tmp/sing-warp.json
+    /opt/sing-warp/gojq '.inbounds |= map(select(.type != "tun"))' /tmp/sing-warp.json >/tmp/sing-warp-tmp.json
+    mv /tmp/sing-warp-tmp.json /tmp/sing-warp.json
 fi
