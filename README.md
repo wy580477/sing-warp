@@ -47,6 +47,8 @@ sing-warp 配置文件位于 /opt/sing-warp/config，可使用文本编辑器进
 
 WARP 配置文件位于 /opt/sing-warp/warp.conf，默认由 [warp-reg](https://github.com/badafans/warp-reg) 自动生成，可自行修改。
 
+ShadowSocks 和 Vmess Websocket 代理协议配置文件位于 /opt/sing-warp/proxy_config，可使用文本编辑器进行修改。
+
 sing-box 配置文件位于 /opt/sing-warp/config.json, 可在 inbounds 部分自行添加代理协议入站。
 
 ## 卸载
