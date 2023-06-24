@@ -11,7 +11,7 @@ aarch64 | arm64)
     OS_type='arm64'
     ;;
 *)
-    echo 'OS type not supported'
+    echo 'CPU Architecture not supported'
     exit 2
     ;;
 esac
@@ -88,14 +88,12 @@ echo ''
 sleep 5
 if systemctl is-active --quiet sing-warp ; then
     echo "sing-warp 服务启动成功。"
-    SOCKS_PORT=$(grep socks_port /opt/sing-warp/config | sed "s|.*:||;s| ||g")
+    SOCKS_PORT=$(grep ^socks_port /opt/sing-warp/config | sed "s|^socks_port:||;s| ||g")
     echo "Socks 代理: 127.0.0.1:${SOCKS_PORT}"
 else
     echo "sing-warp 服务启动失败。执行 journalctl -u sing-warp 查看日志。"
 fi
 
-echo ''
-echo '项目网址: https://github.com/wy580477/sing-warp'
 echo ''
 echo '停止 sing-warp 服务: systemctl stop sing-warp'
 echo '启动 sing-warp 服务: systemctl stop sing-warp'
@@ -105,3 +103,6 @@ echo '允许 sing-warp 服务开机启动: systemctl enable sing-warp'
 echo '查看 sing-warp 服务状态: systemctl status sing-warp'
 echo '查看 sing-warp 日志: journalctl -u sing-warp'
 echo '查看 sing-warp 配置: cat /opt/sing-warp/config'
+echo '查看代理节点设置: cat /opt/sing-warp/proxy_config'
+echo ''
+bash /opt/sing-warp/node-info.sh

@@ -4,6 +4,16 @@ set -e
 
 cp /opt/sing-warp/config.json /tmp/sing-warp.json
 
+# generate proxy-inbound config
+bash /opt/sing-warp/node_info.sh
+
+SS_PORT=$(grep ^ss_port: /opt/sing-warp/proxy_config | sed "s|^ss_port:||;s| ||g")
+SS_PASSWORD=$(grep ^ss_password: /opt/sing-warp/proxy_config | sed "s|^ss_password:||;s| ||g")
+SS_METHOD=$(grep ^ss_method: /opt/sing-warp/proxy_config | sed "s|^ss_method:||;s| ||g")
+VMESS_PORT=$(grep ^vmess_port: /opt/sing-warp/proxy_config | sed "s|^vmess_port:||;s| ||g")
+UUID=$(grep ^uuid: /opt/sing-warp/proxy_config | sed "s|^uuid:||;s| ||g")
+VMESS_WS_PATH=$(grep ^vmess_ws_path: /opt/sing-warp/proxy_config | sed "s|^vmess_ws_path:||;s| ||g")
+
 # generate warp config
 if [ ! -f /opt/sing-warp/warp.conf ]; then
     /opt/sing-warp/warp-reg >/opt/sing-warp/warp.conf
@@ -25,7 +35,12 @@ if [ "${OVERRIDE_DEST}" = "false" ]; then
     sed -i "s|\"sniff_override_destination\": true|\"sniff_override_destination\": false|g" /tmp/sing-warp.json
 fi
 
-/opt/sing-warp/gojq '.outbounds |= map(if .tag == "warp" then .private_key = "'${WG_PRIVATE_KEY}'" | .peer_public_key = "'${WG_PEER_PUBLIC_KEY}'" | .local_address = ["198.18.0.1/32","'${WG_IP6_ADDR}'/128"] | .reserved = '${WG_RESERVED}' | .mtu = '${WG_MTU}' else . end) | .inbounds |= map(if .tag == "socks-in" then .listen_port = '${SOCKS_PORT}' else . end)' /tmp/sing-warp.json >/tmp/sing-warp-tmp.json
+# generate sing-box config
+/opt/sing-warp/gojq '.outbounds |= map(if .tag == "warp" then .private_key = "'${WG_PRIVATE_KEY}'" | .peer_public_key = "'${WG_PEER_PUBLIC_KEY}'" | .local_address = ["198.18.0.1/32","'${WG_IP6_ADDR}'/128"] | .reserved = '${WG_RESERVED}' | .mtu = '${WG_MTU}' else . end)
+                   | .inbounds |= map(if .tag == "socks-in" then .listen_port = '${SOCKS_PORT}' else . end)
+                   | .inbounds |= map(if .tag == "ss-in" then .listen_port = '${SS_PORT}' | .password = "'${SS_PASSWORD}'" | .method = "'${SS_METHOD}'" else . end)
+                   | .inbounds |= map(if .tag == "vmess-in" then .listen_port = '${VMESS_PORT}' | .users[].uuid = "'${UUID}'" | .transport.path = "'${VMESS_WS_PATH}'" else. end)' \
+                   /tmp/sing-warp.json >/tmp/sing-warp-tmp.json
 mv /tmp/sing-warp-tmp.json /tmp/sing-warp.json
 
 # generate routing rules

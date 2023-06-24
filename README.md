@@ -16,7 +16,9 @@
 
 支持 amd64 / arm64 架构。 理论上支持各种使用 systemd 的 Linux 发行版。
 
-默认提供本地 socks 代理入口。可启用 TUN 透明代理模式，此模式下无需额外设置即可接管流量。
+默认提供本地 socks 代理入口、 ShadowSocks 、Vmess Websocket 代理协议（支持 WS-0RTT）。
+
+可启用 TUN 透明代理模式，此模式下无需额外设置即可接管流量。
 
 注意: TUN 模式不支持 OPENVZ / LXC 等容器类 VPS，而且会让 ipv6 流量无法入站，请勿在仅有 ipv6 网络的 VPS 上使用此模式。
 
@@ -45,7 +47,7 @@ sing-warp 配置文件位于 /opt/sing-warp/config，可使用文本编辑器进
 
 WARP 配置文件位于 /opt/sing-warp/warp.conf，默认由 [warp-reg](https://github.com/badafans/warp-reg) 自动生成，可自行修改。
 
-sing-box 配置文件位于 /opt/sing-warp/config.json, 可在 44 行以下自行添加代理协议入站。
+sing-box 配置文件位于 /opt/sing-warp/config.json, 可在 inbounds 部分自行添加代理协议入站。
 
 ## 卸载
 
