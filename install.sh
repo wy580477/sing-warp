@@ -26,7 +26,7 @@ if [ ! -f /opt/sing-warp/config ]; then
     cp ${DIR_TMP}/sing-warp-release/config /opt/sing-warp/
 fi
 
-cp ${DIR_TMP}/sing-warp-release/{config.json,prestart.sh,sing-warp.service,README.md,LICENSE} /opt/sing-warp/
+cp ${DIR_TMP}/sing-warp-release/{config.json,pre-start.sh,sing-warp.service,README.md,LICENSE} /opt/sing-warp/
 cp -f /opt/sing-warp/sing-warp.service /etc/systemd/system/
 
 # install gojq
