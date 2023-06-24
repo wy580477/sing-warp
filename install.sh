@@ -42,6 +42,9 @@ rm -rf ${DIR_TMP}
 curl -L -o /opt/sing-warp/warp-reg https://github.com/badafans/warp-reg/releases/download/v1.0/main-linux-${OS_type}
 chmod +x /opt/sing-warp/warp-reg
 
+echo ""
+bash /opt/sing-warp/node-info.sh
+
 systemctl enable --now sing-warp
 
 echo ''
@@ -104,5 +107,3 @@ echo '查看 sing-warp 服务状态: systemctl status sing-warp'
 echo '查看 sing-warp 日志: journalctl -u sing-warp'
 echo '查看 sing-warp 配置: cat /opt/sing-warp/config'
 echo '查看代理节点设置: cat /opt/sing-warp/proxy_config'
-echo ''
-bash /opt/sing-warp/node-info.sh
