@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 OS_type="$(uname -m)"
 case "$OS_type" in
 x86_64 | amd64)
@@ -14,18 +16,22 @@ aarch64 | arm64)
     ;;
 esac
 
-mkdir -p /opt/sing-warp
+mkdir -p /opt/sing-warp 2>/dev/null
 DIR_TMP="$(mktemp -d)"
 
 # install project files
 curl -L 'https://github.com/wy580477/sing-warp/archive/refs/tags/release.tar.gz' | tar xz -C ${DIR_TMP}
 
-if [ -f /opt/sing-warp/config ]; then
-    cp /opt/sing-warp/config /opt/sing-warp/config.bak
+if [ ! -f /opt/sing-warp/config ]; then
+    cp ${DIR_TMP}/sing-warp-release/config /opt/sing-warp/
 fi
 
-cp ${DIR_TMP}/sing-warp-release/* /opt/sing-warp/
+cp ${DIR_TMP}/sing-warp-release/{config.json,prestart.sh,sing-warp.service,README.md,LICENSE} /opt/sing-warp/
 cp -f /opt/sing-warp/sing-warp.service /etc/systemd/system/
+
+# install gojq
+curl -L 'https://github.com/itchyny/gojq/releases/download/v0.12.13/gojq_v0.12.13_linux_'${OS_type}'.tar.gz' | tar xz -C ${DIR_TMP}
+install -m 755 ${DIR_TMP}/gojq*/gojq /opt/sing-warp/
 
 # install sing-box
 curl -L 'https://github.com/SagerNet/sing-box/releases/download/v1.3-rc2/sing-box-1.3-rc2-linux-'${OS_type}'.tar.gz' | tar xz -C ${DIR_TMP}
@@ -39,18 +45,36 @@ chmod +x /opt/sing-warp/warp-reg
 systemctl enable --now sing-warp
 
 echo ''
-read -r -p "是否启用分流模式？[y/N] " input
+echo '选择 WARP 分流模式:'
+echo "1. 规则分流模式"
+echo "2. 全局 WARP 模式"
+echo "3. 全局直连模式"
+echo "输入数字以选择，回车确认"
 
-if [[ "$input" =~ ^([yY][eE][sS]|[yY])+$ ]]; then
-    echo '已启用分流模式'
-    sed -i 's|routing_mode:.*|routing_mode: rule|' /opt/sing-warp/config
-else
-    echo '已启用全局 WARP 模式'
-    sed -i 's|routing_mode:.*|routing_mode: global|' /opt/sing-warp/config
-fi
+read -r choice
+
+case $choice in
+    1)
+        echo "已选择规则分流模式"
+        sed -i 's|routing_mode:.*|routing_mode: rule|' /opt/sing-warp/config
+        ;;
+    2)
+        echo "已选择全局 WARP 模式"
+        sed -i 's|routing_mode:.*|routing_mode: global|' /opt/sing-warp/config
+        ;;
+    3)
+        echo "已选择全局直连模式"
+        sed -i 's|routing_mode:.*|routing_mode: direct|' /opt/sing-warp/config
+        ;;
+    *)
+        echo "无效的选择, 默认启用分流模式"
+        sed -i 's|routing_mode:.*|routing_mode: rule|' /opt/sing-warp/config
+        ;;
+esac
 
 echo ''
-read -r -p "是否启用 TUN 模式？[y/N] 注意: 此模式不支持 OPENVZ / LXC 等容器类 VPS, 启用此模式后 ipv6 流量无法入站" input
+echo '是否启用 TUN 模式自动接管流量？[y/N] 注意: 此模式不支持 OPENVZ / LXC 等容器类 VPS, 启用此模式后 ipv6 流量无法入站'
+read -r input
 
 if [[ "$input" =~ ^([yY][eE][sS]|[yY])+$ ]]; then
     echo '已启用 TUN 模式'
