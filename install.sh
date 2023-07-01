@@ -34,7 +34,7 @@ curl -L 'https://github.com/itchyny/gojq/releases/download/v0.12.13/gojq_v0.12.1
 install -m 755 ${DIR_TMP}/gojq*/gojq /opt/sing-warp/
 
 # install sing-box
-curl -L 'https://github.com/SagerNet/sing-box/releases/download/v1.3-rc2/sing-box-1.3-rc2-linux-'${OS_type}'.tar.gz' | tar xz -C ${DIR_TMP}
+curl -L 'https://github.com/SagerNet/sing-box/releases/download/v1.3.0/sing-box-1.3.0-linux-'${OS_type}'.tar.gz' | tar xz -C ${DIR_TMP}
 install -m 755 ${DIR_TMP}/sing-box*/sing-box /opt/sing-warp/
 rm -rf ${DIR_TMP}
 
