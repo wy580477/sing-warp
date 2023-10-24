@@ -20,26 +20,27 @@ mkdir -p /opt/sing-warp 2>/dev/null
 DIR_TMP="$(mktemp -d)"
 
 # install project files
-curl -L 'https://github.com/wy580477/sing-warp/archive/refs/tags/release.tar.gz' | tar xz -C ${DIR_TMP}
-
 if [ ! -f /opt/sing-warp/config ]; then
-    cp ${DIR_TMP}/sing-warp-release/config /opt/sing-warp/
+    curl -o /opt/sing-warp/config https://raw.githubusercontent.com/wy580477/sing-warp/main/config
 fi
 
-cp ${DIR_TMP}/sing-warp-release/{config.json,pre-start.sh,node_info.sh,sing-warp.service,README.md,LICENSE} /opt/sing-warp/
-cp -f /opt/sing-warp/sing-warp.service /etc/systemd/system/
+curl -o /opt/sing-warp/config.json https://raw.githubusercontent.com/wy580477/sing-warp/main/config.json
+curl -o /opt/sing-warp/pre-start.sh https://raw.githubusercontent.com/wy580477/sing-warp/main/pre-start.sh
+curl -o /opt/sing-warp/node_info.sh https://raw.githubusercontent.com/wy580477/sing-warp/main/node_info.sh
+curl -o /etc/systemd/system/sing-warp.service https://raw.githubusercontent.com/wy580477/sing-warp/main/sing-warp.service
+curl -o /opt/sing-warp/README.md https://raw.githubusercontent.com/wy580477/sing-warp/main/README.md
 
 # install gojq
-curl -L 'https://github.com/itchyny/gojq/releases/download/v0.12.13/gojq_v0.12.13_linux_'${OS_type}'.tar.gz' | tar xz -C ${DIR_TMP}
+curl -L 'https://raw.githubusercontent.com/wy580477/sing-warp/assets/gojq_linux_'${OS_type}'.tar.gz' | tar xz -C ${DIR_TMP}
 install -m 755 ${DIR_TMP}/gojq*/gojq /opt/sing-warp/
 
 # install sing-box
-curl -L 'https://github.com/SagerNet/sing-box/releases/download/v1.3.0/sing-box-1.3.0-linux-'${OS_type}'.tar.gz' | tar xz -C ${DIR_TMP}
+curl -L 'https://raw.githubusercontent.com/wy580477/sing-warp/assets/sing-box-1.6.0-beta.4-linux-'${OS_type}'.tar.gz' | tar xz -C ${DIR_TMP}
 install -m 755 ${DIR_TMP}/sing-box*/sing-box /opt/sing-warp/
 rm -rf ${DIR_TMP}
 
 # install warp-reg
-curl -L -o /opt/sing-warp/warp-reg https://github.com/badafans/warp-reg/releases/download/v1.0/main-linux-${OS_type}
+curl -L -o /opt/sing-warp/warp-reg https://raw.githubusercontent.com/wy580477/sing-warp/assets/warp-reg-${OS_type}
 chmod +x /opt/sing-warp/warp-reg
 
 echo ""
@@ -76,7 +77,7 @@ case $choice in
 esac
 
 echo ''
-echo '是否启用 TUN 模式自动接管流量？[y/N] 注意: 此模式不支持 OPENVZ / LXC 等容器类 VPS, 启用此模式后 ipv6 流量无法入站'
+echo '是否启用 TUN 模式自动接管流量？[y/N] 注意: 此模式不支持 OPENVZ / LXC 等容器类 VPS'
 read -r input
 
 if [[ "$input" =~ ^([yY][eE][sS]|[yY])+$ ]]; then

@@ -4,7 +4,7 @@
 # Socks5 代理端口
 socks_port: 51808
 # TUN 透明代理模式，设置为 true 开启后，无需额外设置，自动接管流量。
-# 不支持 OPENVZ / LXC  等容器 VPS。启用后，ipv6 流量无法入站，不要在只有 ipv6 网络的 VPS 上使用。
+# 不支持 OPENVZ / LXC  等容器 VPS。
 tun_mode: false
 # WireGuard MTU 值，如果 WARP 出站工作不正常，可尝试为修改更小的数值。
 wg_mtu: 1408
