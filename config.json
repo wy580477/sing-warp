@@ -6,8 +6,7 @@
     "servers": [
       {
         "address": "tls://1.1.1.1",
-        "detour": "direct",
-        "strategy": "prefer_ipv4"
+        "detour": "direct"
       },
       {
         "tag": "warp-dns",
