@@ -46,8 +46,6 @@ chmod +x /opt/sing-warp/warp-reg
 echo ""
 bash /opt/sing-warp/node_info.sh
 
-systemctl enable --now sing-warp
-
 echo ''
 echo '选择 WARP 分流模式:'
 echo "1. 规则分流模式"
@@ -87,6 +85,8 @@ else
     echo '已禁用 TUN 模式'
     sed -i 's|tun_mode:.*|tun_mode: false|' /opt/sing-warp/config
 fi
+
+systemctl enable --now sing-warp
 
 echo ''
 sleep 5
