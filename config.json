@@ -5,12 +5,14 @@
   "dns": {
     "servers": [
       {
-        "address": "tls://1.1.1.1",
+        "address": "tls://dns.google",
+        "address_resolver": "local",
         "detour": "direct"
       },
       {
         "tag": "warp-dns",
-        "address": "tls://1.1.1.1",
+        "address": "tls://dns.google",
+        "address_resolver": "local",
         "strategy": "prefer_ipv6"
       }
     ],
